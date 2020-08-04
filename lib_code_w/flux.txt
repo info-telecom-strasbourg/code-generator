@@ -1,2 +1,0 @@
-#include <iostream>
-int test(){}int main(void);int main(void){int nb, qty;std::cout<<"Hello world";std::cerr<<"Hello world";std::cin>>nb>>qty;flux_in>>nb>>qty;flux_out<<"Hello world";try{}catch(Exception e){}return 0;}

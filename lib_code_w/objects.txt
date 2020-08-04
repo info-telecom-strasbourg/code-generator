@@ -1,1 +1,0 @@
-typedef struct Coord Coord;struct Coord{int x;int y;}; class Coord{private :protected :public :};

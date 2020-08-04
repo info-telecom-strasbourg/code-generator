@@ -1,21 +1,39 @@
+# Do not print when we change of directory
+MAKEFLAGS += --no-print-directory
+
 CC		:= g++
-C_FLAGS := -std=c++11 -g -pthread
+C_FLAGS := -std=c++11 -Wall -Wextra -Werror -g
+INCLUDE_PATH = src/header
+INCLUDE_PATH_TEST = tests/header
+LIBRARIES	:= -pthread
+TARGET =
+SRCDIR = src
+OBJDIR = obj
+BINDIR = bin
+SOURCES  :=	$(wildcard $(SRCDIR)/*.cpp)
+INCLUDES :=	$(wildcard $(INCLUDE_PATH)/*.hpp)
+OBJECTS  :=	$(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
-LIBRARIES	:=
 
-ifeq ($(OS),Windows_NT)
-EXECUTABLE	:= test.exe
-else
-EXECUTABLE	:= test
-endif
+# $(BINDIR)/$(TARGET): $(OBJECTS)
+# 	mkdir -p $(BINDIR)
+# 	$(CC) -o $@ $^ $(CFLAGS) $(LIBRARIES)
 
-all: 	$(EXECUTABLE)
+$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
+	@ echo "objects"
+	mkdir -p $(OBJDIR)
+	$(CC) -o $@ -c $< $(CFLAGS) -I $(INCLUDE_PATH)
 
 clean:
-	$(RM) $(EXECUTABLE) main.cpp
+	$(RM) $(OBJDIR)/* $(BINDIR)/*
 
-run: all
-	$(EXECUTABLE)
+test-code-w:
+	@ cd tests $(MAKE) && make run TARGET=test_lib_code_w
 
-$(EXECUTABLE): *.cpp
-	$(CC) $(C_FLAGS) -I -L $^ -o $@ $(LIBRARIES)
+test-code-comp:
+	@ cd tests $(MAKE) && make run TARGET=test_code_comprehension
+
+test:
+	@ cd tests $(MAKE) && make run
+
+.PHONY: clean

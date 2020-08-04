@@ -1,1 +1,0 @@
-/*This program shows how to declare a variable.*//*//Declaration of the variable*/ int nb = 2;/*//the variable nb is equal to 2*/
