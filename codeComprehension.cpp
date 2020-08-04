@@ -1,4 +1,4 @@
-#include "codeComprehension.h"
+#include "codeComprehension.hpp"
 
 #define CCCHECK(op, msg)              \
     do                                \
@@ -95,7 +95,7 @@ codeComprehension::getNextInstr(string &stringToExtract)
 string
 codeComprehension::getNextIf(string &stringToExtract)
 {
-    if(stringToExtract.substr(0,2) != "if")
+    if(stringToExtract.substr(0,3) != "if(")
     {
         cerr << "The first sub string is not a if" << endl;
         return "";
@@ -112,29 +112,29 @@ codeComprehension::getNextIf(string &stringToExtract)
         i++;
     }
 
-    string nextIf = stringToExtract.substr(0, i - 1);
-    stringToExtract.erase(0, i - 1);
+    string nextIf = stringToExtract.substr(0, i);
+    stringToExtract.erase(0, i);
     return nextIf;
 }
 
 string
 codeComprehension::getNextElse(string &stringToExtract)
 {
-    if (stringToExtract.substr(0, 4) != "else")
+    if (stringToExtract.substr(0, 5) != "else{")
     {
         cerr << "The first sub string is not a else" << endl;
         return "";
     }
 
-    string nextIf = stringToExtract.substr(0, 4);
-    stringToExtract.erase(0, 4);
+    string nextIf = stringToExtract.substr(0, 5);
+    stringToExtract.erase(0, 5);
     return nextIf;
 }
 
 string
 codeComprehension::getNextWhile(string &stringToExtract)
 {
-    if (stringToExtract.substr(0, 5) != "while")
+    if (stringToExtract.substr(0, 6) != "while(")
     {
         cerr << "The first sub string is not a while" << endl;
         return "";
@@ -152,15 +152,15 @@ codeComprehension::getNextWhile(string &stringToExtract)
         i++;
     }
 
-    string nextWhile = stringToExtract.substr(0, i - 1);
-    stringToExtract.erase(0, i - 1);
+    string nextWhile = stringToExtract.substr(0, i);
+    stringToExtract.erase(0, i);
     return nextWhile;
 }
 
 string
 codeComprehension::getNextFor(string &stringToExtract)
 {
-    if (stringToExtract.substr(0, 3) != "for")
+    if (stringToExtract.substr(0, 4) != "for(")
     {
         cerr << "The first sub string is not a for" << endl;
         return "";
@@ -177,15 +177,15 @@ codeComprehension::getNextFor(string &stringToExtract)
         i++;
     }
 
-    string nextWhile = stringToExtract.substr(0, i - 1);
-    stringToExtract.erase(0, i - 1);
+    string nextWhile = stringToExtract.substr(0, i);
+    stringToExtract.erase(0, i);
     return nextWhile;
 }
 
 string
 codeComprehension::getNextSwitch(string &stringToExtract)
 {
-    if (stringToExtract.substr(0, 6) != "switch")
+    if (stringToExtract.substr(0, 7) != "switch(")
     {
         cerr << "The first sub string is not a switch" << endl;
         return "";
@@ -202,15 +202,15 @@ codeComprehension::getNextSwitch(string &stringToExtract)
         i++;
     }
 
-    string nextWhile = stringToExtract.substr(0, i - 1);
-    stringToExtract.erase(0, i - 1);
+    string nextWhile = stringToExtract.substr(0, i);
+    stringToExtract.erase(0, i);
     return nextWhile;
 }
 
 string
 codeComprehension::getNextCase(string &stringToExtract)
 {
-    if (stringToExtract.substr(0, 4) != "case")
+    if (stringToExtract.substr(0, 5) != "case ")
     {
         cerr << "The first sub string is not a case" << endl;
         return "";
@@ -224,7 +224,7 @@ codeComprehension::getNextCase(string &stringToExtract)
 string
 codeComprehension::getNextDefault(string &stringToExtract)
 {
-    if (stringToExtract.substr(0, 7) != "default")
+    if (stringToExtract.substr(0, 8) != "default:")
     {
         cerr << "The first sub string is not a default" << endl;
         return "";
@@ -238,35 +238,35 @@ codeComprehension::getNextDefault(string &stringToExtract)
 string
 codeComprehension::getNextDo(string &stringToExtract)
 {
-    if (stringToExtract.substr(0, 2) != "do")
+    if (stringToExtract.substr(0, 3) != "do{")
     {
         cerr << "The first sub string is not a do" << endl;
         return "";
     }
 
-    string nextDo = stringToExtract.substr(0, 2);
-    stringToExtract.erase(0, 2);
+    string nextDo = stringToExtract.substr(0, 3);
+    stringToExtract.erase(0, 3);
     return nextDo;
 }
 
 string
 codeComprehension::getNextTry(string &stringToExtract)
 {
-    if (stringToExtract.substr(0, 3) != "try")
+    if (stringToExtract.substr(0, 4) != "try{")
     {
         cerr << "The first sub string is not a try" << endl;
         return "";
     }
 
-    string nextTry = stringToExtract.substr(0, 3);
-    stringToExtract.erase(0, 3);
+    string nextTry = stringToExtract.substr(0, 4);
+    stringToExtract.erase(0, 4);
     return nextTry;
 }
 
 string
 codeComprehension::getNextCatch(string &stringToExtract)
 {
-    if (stringToExtract.substr(0, 5) != "catch")
+    if (stringToExtract.substr(0, 6) != "catch(")
     {
         cerr << "The first sub string is not a catch" << endl;
         return "";
@@ -283,8 +283,8 @@ codeComprehension::getNextCatch(string &stringToExtract)
         i++;
     }
 
-    string nextCatch = stringToExtract.substr(0, i - 1);
-    stringToExtract.erase(0, i - 1);
+    string nextCatch = stringToExtract.substr(0, i);
+    stringToExtract.erase(0, i);
     return nextCatch;
 }
 

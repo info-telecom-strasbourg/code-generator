@@ -3,9 +3,9 @@
 #include "codeComprehension.h"
 
 
-void test_stringToExtract(void)
+void test_fileInVector(void)
 {
-    std::string stringToExtract(codeComprehension::fileInVector("stringToExtract.txt"));
+    std::string stringToExtract(codeComprehension::fileInVector("fileInVector.txt"));
     assert(stringToExtract == "This\nis\na\ntest\nfile"); 
 }
 
@@ -69,12 +69,19 @@ void test_getNextComment(void)
     assert(codeComprehension::getNextComment(stringToExtract) == "/*Comment\nwith a line break*/"); 
 }
 
+void test_getNextIf(void)
+{
+    std::string stringToExtract("");
+    assert(codeComprehension::getNextIf(stringToExtract) == ""); 
+}
+
 
 int main(void)
 {
-    TEST(test_stringToExtract);
+    TEST(test_fileInVector);
     TEST(test_getNextString);
     TEST(test_getNextComment);
+    TEST(test_getNextIf);
     
     
 
