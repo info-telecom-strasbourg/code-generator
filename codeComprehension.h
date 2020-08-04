@@ -9,24 +9,35 @@
 
 class codeComprehension
 {
-    private:
-        int openedBraces = 0;
-        int openedParentheses = 0;
-        int openedHook = 0;
-        int tabNumb = 0;
+private:
+    int openedBraces = 0;
+    int openedParentheses = 0;
+    int openedHook = 0;
+    int tabNumb = 0;
 
-        string fileInVector(string file);
-        vector<string> separatedBlocks(string fileContent);
+public:
+    static std::string fileInVector(std::string file);
+    static std::string getNextString(std::string &stringToExtract);
+    static std::string getNextComment(std::string &stringToExtract);
+    static std::string getNextInstr(std::string &stringToExtract);
+    static std::string getNextIf(std::string &stringToExtract);
+    static std::string getNextElse(std::string &stringToExtract);
+    static std::string getNextWhile(std::string &stringToExtract);
+    static std::string getNextFor(std::string &stringToExtract);
+    static std::string getNextSwitch(std::string &stringToExtract);
+    static std::string getNextCase(std::string &stringToExtract);
+    static std::string getNextDefault(std::string &stringToExtract);
+    static std::string getNextDo(std::string &stringToExtract);
+    static std::string getNextTry(std::string &stringToExtract);
+    static std::string getNextCatch(std::string &stringToExtract);
+    static std::string getNextClassic(std::string &stringToExtract);
+    static std::string getNextPreProc(std::string &stringToExtract);
 
-    public:
-        void indentAuto(string file, int tabSpace, bool newLineAftDeclaration, bool newLineAftProcedure,
-                bool breakBeforeOppBool,bool breakAfterComma, bool bracesAftCommand, bool tabBraces,
-                bool bracesNewLineStruct, bool bracesNewLineClass, bool bracesNewLineEnum, int spaceComment,
-                int tabCase, int tabContinuDecla, bool oneLineArg, bool keepBlankLine, bool alineParentheses,
-                bool eightyChar, bool optiBraces);
-
-
+    void indentAuto(std::string file, int tabSpace, bool newLineAftDeclaration, bool newLineAftProcedure,
+                    bool breakBeforeOppBool, bool breakAfterComma, bool bracesAftCommand, bool tabBraces,
+                    bool bracesNewLineStruct, bool bracesNewLineClass, bool bracesNewLineEnum, int spaceComment,
+                    int tabCase, int tabContinuDecla, bool oneLineArg, bool keepBlankLine, bool alineParentheses,
+                    bool eightyChar, bool optiBraces, bool preProcTab);
 };
-
 
 #endif //CODE_GENERATOR_CODE_COMPREHENSION_H
