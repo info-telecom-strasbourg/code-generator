@@ -406,11 +406,11 @@ public:
 	getNextClassic(std::string &stringToExtract)
 	{
 		int i(0);
-		while (stringToExtract[i] != ';')
+		while (stringToExtract[i] != ';' && i < stringToExtract.size()-1)
 			i++;
 
-		std::string nextClasic = stringToExtract.substr(0, i);
-		stringToExtract.erase(0, i);
+		std::string nextClasic = stringToExtract.substr(0, i+1);
+		stringToExtract.erase(0, i+1);
 		return nextClasic;
 	}
 
@@ -429,9 +429,18 @@ public:
 		}
 
 		int i(0);
-		int backSlash(0);
-		while (stringToExtract[i] != '\n')
+		bool slashed(false);
+		while (i < stringToExtract.size())
+		{
+			if(stringToExtract[i] == '\n' && !slashed)
+				break;
+
+			if(stringToExtract[i] == '\\')
+				slashed = true;
+			else if(stringToExtract[i] != ' ')
+				slashed = false;
 			i++;
+		}
 
 		std::string nextProc = stringToExtract.substr(0, i);
 		stringToExtract.erase(0, i);

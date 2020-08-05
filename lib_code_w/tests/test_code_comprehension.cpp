@@ -441,7 +441,7 @@ void test_getNextPreProc(void)
 }
 
 void test_getNextInstr(void)
-{
+{    
     std::string stringExtracted("#\nprank");
     assert(codeComprehension::getNextInstr(stringExtracted) == "#\n prank"); 
 
@@ -487,7 +487,7 @@ int main(void)
     TEST(test_getNextDo);
     TEST(test_getNextTry);
     TEST(test_getNextCatch);
-    // TEST(test_getNextClassic);
+    TEST(test_getNextClassic);
     TEST(test_getNextPreProc);
     // TEST(test_getNextInstr);
 
