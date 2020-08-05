@@ -65,7 +65,7 @@
             function();                                                                                              \
             auto end = std::chrono::steady_clock::now();                                                             \
             std::cout.rdbuf(__its_unit_test_stream_buffer_cout);                                                     \
-            std::cerr.rdbuf(__its_unit_test_stream_buffer_cerr);                                                          \
+            std::cerr.rdbuf(__its_unit_test_stream_buffer_cerr);                                                     \
             unsigned long elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
             __its_unit_test_cpp_running = false;                                                                     \
             __its_unit_test_cpp_load.join();                                                                         \
@@ -103,7 +103,7 @@
             __its_unit_test_cpp_running = true;                                                                      \
             __its_unit_test_cpp_load = std::thread(__its_unit_test_cpp_loadingEffect);                               \
             std::ofstream file("/dev/null");                                                                         \
-            std::streambuf *__its_unit_test_stream_buffer_cerr = std::cerr.rdbuf();                                       \
+            std::streambuf *__its_unit_test_stream_buffer_cerr = std::cerr.rdbuf();                                  \
             std::cout.rdbuf(file.rdbuf());                                                                           \
             std::cerr.rdbuf(file.rdbuf());                                                                           \
             auto start = std::chrono::steady_clock::now();                                                           \
@@ -113,7 +113,7 @@
             __its_unit_test_cpp_load.join();                                                                         \
             unsigned long elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
             std::cout.rdbuf(__its_unit_test_stream_buffer_cout);                                                     \
-            std::cerr.rdbuf(__its_unit_test_stream_buffer_cerr);                                                          \
+            std::cerr.rdbuf(__its_unit_test_stream_buffer_cerr);                                                     \
             std::cout << "\033[0;32m"                                                                                \
                       << "Success "                                                                                  \
                       << "\x1b[0m"                                                                                   \

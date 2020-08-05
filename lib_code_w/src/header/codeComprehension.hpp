@@ -32,16 +32,23 @@ public:
 	fileInVector(std::string file)
 	{
 		std::ifstream fileToRead(file, std::ios::in | std::ios::ate);
+		if (!fileToRead)
+		{
+			std::cerr << "Problem while opening the file " << file << std::endl;
+			exit(EXIT_FAILURE);
+		}
 		std::string str;
 
 		fileToRead.seekg(0, std::ios::end);
 		std::ifstream::streampos size = fileToRead.tellg();
-		std::cout << size << std::endl;
+
 		str.reserve(size);
 		fileToRead.seekg(0, std::ios::beg);
 
 		str.assign((std::istreambuf_iterator<char>(fileToRead)),
 				   std::istreambuf_iterator<char>());
+
+		fileToRead.close();
 		return str;
 	}
 
@@ -69,6 +76,78 @@ public:
 	}
 
 	/**
+	 * Extract an opening brace
+	 * @param stringToExtract: the file's content
+	 * @return: a string containing the opening brace
+	 */
+	static std::string
+	getNextOpeningBrace(std::string &stringToExtract)
+	{
+		if (stringToExtract[0] != '{')
+		{
+			std::cerr << "The first sub string is not an opening brace" << std::endl;
+			return "";
+		}
+
+		stringToExtract.erase(0, 1);
+		return "{";
+	}
+
+	/**
+	 * Extract a closing brace
+	 * @param stringToExtract: the file's content
+	 * @return: a string containing the closing brace
+	 */
+	static std::string
+	getNextClosingBrace(std::string &stringToExtract)
+	{
+		if (stringToExtract[0] != '}')
+		{
+			std::cerr << "The first sub string is not a closing brace" << std::endl;
+			return "";
+		}
+
+		stringToExtract.erase(0, 1);
+		return "}";
+	}
+
+	/**
+	 * Extract a space
+	 * @param stringToExtract: the file's content
+	 * @return: a string containing the space
+	 */
+	static std::string
+	getNextSpace(std::string &stringToExtract)
+	{
+		if (stringToExtract[0] != ' ')
+		{
+			std::cerr << "The first sub string is not a space" << std::endl;
+			return "";
+		}
+
+		stringToExtract.erase(0, 1);
+		return " ";
+	}
+
+	/**
+	 * Extract a linebreak
+	 * @param stringToExtract: the file's content
+	 * @return: a string containing the linebreak
+	 */
+	static std::string
+	getNextLinebreak(std::string &stringToExtract)
+	{
+		if (stringToExtract[0] != '\n')
+		{
+			std::cerr << "The first sub string is not a linebreak" << std::endl;
+			return "";
+		}
+
+		stringToExtract.erase(0, 1);
+		return "\n";
+	}
+
+	/**
 	 * Extract the next comment from the file
 	 * @param stringToExtract: the file's content
 	 * @return: a string containing the next string
@@ -88,38 +167,8 @@ public:
 		while (stringToExtract.substr(i, lengthEndComment) != endComment && i + lengthEndComment < stringToExtract.size())
 			i++;
 		std::string nextComment = stringToExtract.substr(0, i + lengthEndComment);
-		stringToExtract.erase(0, i + 1);
+		stringToExtract.erase(0, i + lengthEndComment);
 		return nextComment;
-	}
-
-	/**
-	 * Extract the next instruction from the file
-	 * @param stringToExtract: the file's content
-	 * @return: a string containing the next string
-	 */
-	static std::string
-	getNextInstr(std::string &stringToExtract)
-	{
-		if (stringToExtract[0] == '#')
-			return getNextPreProc(stringToExtract);
-		else if (stringToExtract.substr(0, 2) == "if")
-			return getNextIf(stringToExtract);
-		else if (stringToExtract.substr(0, 4) == "else")
-			return getNextElse(stringToExtract);
-		else if (stringToExtract.substr(0, 5) == "while")
-			return getNextWhile(stringToExtract);
-		else if (stringToExtract.substr(0, 3) == "for")
-			return getNextFor(stringToExtract);
-		else if (stringToExtract.substr(0, 5) == "switch")
-			return getNextSwitch(stringToExtract);
-		else if (stringToExtract.substr(0, 2) == "do")
-			return getNextDo(stringToExtract);
-		else if (stringToExtract.substr(0, 3) == "try")
-			return getNextTry(stringToExtract);
-		else if (stringToExtract.substr(0, 5) == "catch")
-			return getNextCatch(stringToExtract);
-		else
-			return getNextClassic(stringToExtract);
 	}
 
 	/**
@@ -406,11 +455,24 @@ public:
 	getNextClassic(std::string &stringToExtract)
 	{
 		int i(0);
-		while (stringToExtract[i] != ';' && i < stringToExtract.size()-1)
-			i++;
+		bool isInString(false);
+		while (i < stringToExtract.size())
+		{
+			if (stringToExtract[i] == '\"' || stringToExtract[i] == '\'')
+				if (i > 0 && stringToExtract[i - 1] != '\\')
+					isInString = !isInString;
 
-		std::string nextClasic = stringToExtract.substr(0, i+1);
-		stringToExtract.erase(0, i+1);
+			if (!isInString && stringToExtract[i] == ';')
+			{
+				i++;
+				break;
+			}
+
+			i++;
+		}
+
+		std::string nextClasic = stringToExtract.substr(0, i);
+		stringToExtract.erase(0, i);
 		return nextClasic;
 	}
 
@@ -430,21 +492,123 @@ public:
 
 		int i(0);
 		bool slashed(false);
-		while (i < stringToExtract.size())
+		while (i < stringToExtract.size() - 1)
 		{
-			if(stringToExtract[i] == '\n' && !slashed)
+			if (stringToExtract[i] == '\n' && !slashed)
 				break;
 
-			if(stringToExtract[i] == '\\')
+			if (stringToExtract[i] == '\\')
 				slashed = true;
-			else if(stringToExtract[i] != ' ')
+			else if (stringToExtract[i] != ' ')
 				slashed = false;
 			i++;
 		}
 
-		std::string nextProc = stringToExtract.substr(0, i);
-		stringToExtract.erase(0, i);
+		std::string nextProc = stringToExtract.substr(0, i + 1);
+		stringToExtract.erase(0, i + 1);
 		return nextProc;
+	}
+
+	/**
+	 * Extract the next instruction from the file
+	 * @param stringToExtract: the file's content
+	 * @return: a string containing the next string
+	 */
+	static std::string
+	getNextItem(std::string &stringToExtract)
+	{
+		if (stringToExtract[0] == '#')
+			return getNextPreProc(stringToExtract);
+		else if (stringToExtract[0] == '/')
+			return getNextComment(stringToExtract);
+		else if (stringToExtract[0] == '\"')
+			return getNextString(stringToExtract);
+		else if (stringToExtract[0] == '{')
+			return getNextOpeningBrace(stringToExtract);
+		else if (stringToExtract[0] == '}')
+			return getNextClosingBrace(stringToExtract);
+		else if (stringToExtract[0] == ' ')
+			return getNextSpace(stringToExtract);
+		else if (stringToExtract[0] == '\n')
+			return getNextLinebreak(stringToExtract);
+		else if (stringToExtract.substr(0, 3) == "if(")
+			return getNextIf(stringToExtract);
+		else if (stringToExtract.substr(0, 5) == "else{")
+			return getNextElse(stringToExtract);
+		else if (stringToExtract.substr(0, 6) == "while(")
+			return getNextWhile(stringToExtract);
+		else if (stringToExtract.substr(0, 4) == "for(")
+			return getNextFor(stringToExtract);
+		else if (stringToExtract.substr(0, 7) == "switch(")
+			return getNextSwitch(stringToExtract);
+		else if (stringToExtract.substr(0, 5) == "case ")
+			return getNextCase(stringToExtract);
+		else if (stringToExtract.substr(0, 8) == "default:")
+			return getNextDefault(stringToExtract);
+		else if (stringToExtract.substr(0, 3) == "do{")
+			return getNextDo(stringToExtract);
+		else if (stringToExtract.substr(0, 4) == "try{")
+			return getNextTry(stringToExtract);
+		else if (stringToExtract.substr(0, 6) == "catch(")
+			return getNextCatch(stringToExtract);
+		else
+			return getNextClassic(stringToExtract);
+	}
+
+	static void compact(std::string origin_file, std::string compacted_file)
+	{
+		std::string stringToExtract = fileInVector(origin_file);
+		std::string stringExtracted;
+
+		std::ofstream flux_compacted_file(compacted_file, std::ios::out | std::ios::trunc);
+		if (!flux_compacted_file)
+		{
+			std::cerr << "Problem while opening the file " << compacted_file << std::endl;
+			exit(EXIT_FAILURE);
+		}
+
+		while (stringToExtract.size() > 0)
+		{
+			stringExtracted = getNextItem(stringToExtract);
+			if (stringToExtract[0] == '#' ||
+				stringToExtract[0] == '/' ||
+				stringToExtract[0] == '\"' ||
+				stringToExtract[0] == '{' ||
+				stringToExtract[0] == '}')
+				flux_compacted_file << stringExtracted;
+			else if (stringToExtract[0] == ' ')
+				flux_compacted_file << stringExtracted;
+			else if (stringToExtract[0] == '\n')
+			{
+				std::cout << stringExtracted << std::endl
+						  << std::endl;
+				flux_compacted_file << " ";
+			}
+			else if (stringToExtract.substr(0, 3) == "if(")
+				flux_compacted_file << stringExtracted;
+			else if (stringToExtract.substr(0, 5) == "else{")
+				flux_compacted_file << stringExtracted;
+			else if (stringToExtract.substr(0, 6) == "while(")
+				flux_compacted_file << stringExtracted;
+			else if (stringToExtract.substr(0, 4) == "for(")
+				flux_compacted_file << stringExtracted;
+			else if (stringToExtract.substr(0, 7) == "switch(")
+				flux_compacted_file << stringExtracted;
+			else if (stringToExtract.substr(0, 5) == "case ")
+				flux_compacted_file << stringExtracted;
+			else if (stringToExtract.substr(0, 8) == "default:")
+				flux_compacted_file << stringExtracted;
+			else if (stringToExtract.substr(0, 3) == "do{")
+				flux_compacted_file << stringExtracted;
+			else if (stringToExtract.substr(0, 4) == "try{")
+				flux_compacted_file << stringExtracted;
+			else if (stringToExtract.substr(0, 6) == "catch(")
+				flux_compacted_file << stringExtracted;
+			else
+				flux_compacted_file << stringExtracted;
+		}
+
+		flux_compacted_file.close();
 	}
 
 	void indentAuto(std::string file, int tabSpace, bool newLineAftDeclaration, bool newLineAftProcedure,

@@ -28,5 +28,5 @@ clean:
 
 run:
 	@ make >/dev/null
-	@ ../bin/$(TARGET)
+	@ ../bin/$(TARGET) || true
 .PHONY: clean
