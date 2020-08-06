@@ -6,6 +6,7 @@
 #include <string>
 #include <fstream>
 #include <streambuf>
+#include "unistd.h"
 
 /**
  * A class that analyse a formated file code
@@ -90,6 +91,8 @@ public:
 		}
 
 		stringToExtract.erase(0, 1);
+		if (stringToExtract.size() != 0 && stringToExtract[0] == '\n')
+			stringToExtract.erase(0, 1);
 		return "{";
 	}
 
@@ -108,6 +111,8 @@ public:
 		}
 
 		stringToExtract.erase(0, 1);
+		if (stringToExtract.size() != 0 && stringToExtract[0] == '\n')
+			stringToExtract.erase(0, 1);
 		return "}";
 	}
 
@@ -144,7 +149,33 @@ public:
 		}
 
 		stringToExtract.erase(0, 1);
+		if (stringToExtract.size() != 0)
+		{
+			int pos = 0;
+			while (pos != stringToExtract.size() && (stringToExtract[pos] == ' ' || stringToExtract[pos] == '\t'))
+				pos++;
+			if (stringToExtract[pos] == '{' || stringToExtract[pos] == '}')
+				return "";
+		}
 		return "\n";
+	}
+
+	/**
+	 * Extract a tabulation
+	 * @param stringToExtract: the file's content
+	 * @return: a string containing the tabulation
+	 */
+	static std::string
+	getNextTabulation(std::string &stringToExtract)
+	{
+		if (stringToExtract[0] != '\t')
+		{
+			std::cerr << "The first sub string is not a tabulation" << std::endl;
+			return "";
+		}
+
+		stringToExtract.erase(0, 1);
+		return "\t";
 	}
 
 	/**
@@ -162,12 +193,13 @@ public:
 		}
 		std::string endComment = (stringToExtract[1] == '/') ? "\n" : "*/";
 		int lengthEndComment = (stringToExtract[1] == '/') ? 1 : 2;
+		int lengthEnd = (stringToExtract[1] == '/') ? 0 : 2;
 
 		int i(2);
 		while (stringToExtract.substr(i, lengthEndComment) != endComment && i + lengthEndComment < stringToExtract.size())
 			i++;
-		std::string nextComment = stringToExtract.substr(0, i + lengthEndComment);
-		stringToExtract.erase(0, i + lengthEndComment);
+		std::string nextComment = stringToExtract.substr(0, i + lengthEnd);
+		stringToExtract.erase(0, i + lengthEnd);
 		return nextComment;
 	}
 
@@ -467,7 +499,8 @@ public:
 				i++;
 				break;
 			}
-
+			else if (!isInString && (stringToExtract[i] == '\n' || stringToExtract[i] == '{'))
+				break;
 			i++;
 		}
 
@@ -510,7 +543,7 @@ public:
 	}
 
 	/**
-	 * Extract the next instruction from the file
+	 * Extract the next item from the file
 	 * @param stringToExtract: the file's content
 	 * @return: a string containing the next string
 	 */
@@ -531,6 +564,8 @@ public:
 			return getNextSpace(stringToExtract);
 		else if (stringToExtract[0] == '\n')
 			return getNextLinebreak(stringToExtract);
+		else if (stringToExtract[0] == '\t')
+			return getNextTabulation(stringToExtract);
 		else if (stringToExtract.substr(0, 3) == "if(")
 			return getNextIf(stringToExtract);
 		else if (stringToExtract.substr(0, 5) == "else{")
@@ -555,6 +590,47 @@ public:
 			return getNextClassic(stringToExtract);
 	}
 
+	/**
+	 * Extract the next item from the file to compact
+	 * @param stringToExtract: the file's content
+	 * @return: a string containing the next string
+	 */
+	static std::string
+	getNextItemCompact(std::string &stringToExtract)
+	{
+		if (stringToExtract[0] == '#')
+			return getNextPreProc(stringToExtract);
+		else if (stringToExtract[0] == '/')
+			return getNextComment(stringToExtract);
+		else if (stringToExtract[0] == '\"')
+			return getNextString(stringToExtract);
+		else if (stringToExtract[0] == '{')
+			return getNextOpeningBrace(stringToExtract);
+		else if (stringToExtract[0] == '}')
+			return getNextClosingBrace(stringToExtract);
+		else if (stringToExtract[0] == ' ')
+			return getNextSpace(stringToExtract);
+		else if (stringToExtract[0] == '\n')
+			return getNextLinebreak(stringToExtract);
+		else if (stringToExtract[0] == '\t')
+			return getNextTabulation(stringToExtract);
+		else
+			return getNextClassic(stringToExtract);
+	}
+
+	/**
+	 * Indicates if this is an intruction that can have no braces
+	 * @param stringToExtract: the file's content
+	 * @return: a boolean
+	 */
+	static bool
+	isAnInstructionOneLine(std::string &stringToExtract)
+	{
+		return (stringToExtract.substr(0, 2) == "if" ||
+				stringToExtract.substr(0, 5) == "while" ||
+				stringToExtract.substr(0, 3) == "for");
+	}
+
 	static void compact(std::string origin_file, std::string compacted_file)
 	{
 		std::string stringToExtract = fileInVector(origin_file);
@@ -569,53 +645,170 @@ public:
 
 		while (stringToExtract.size() > 0)
 		{
-			stringExtracted = getNextItem(stringToExtract);
-			if (stringToExtract[0] == '#' ||
-				stringToExtract[0] == '/' ||
-				stringToExtract[0] == '\"' ||
-				stringToExtract[0] == '{' ||
-				stringToExtract[0] == '}')
+			stringExtracted = getNextItemCompact(stringToExtract);
+			if (stringExtracted[0] == '#' ||
+				stringExtracted[0] == '\"' ||
+				stringExtracted[0] == '{' ||
+				stringExtracted[0] == '}')
 				flux_compacted_file << stringExtracted;
-			else if (stringToExtract[0] == ' ')
-				flux_compacted_file << stringExtracted;
-			else if (stringToExtract[0] == '\n')
+			else if (stringExtracted[0] == '/')
 			{
-				std::cout << stringExtracted << std::endl
-						  << std::endl;
-				flux_compacted_file << " ";
+				if (stringExtracted[1] == '/')
+					flux_compacted_file << "/*";
+				flux_compacted_file << stringExtracted;
+				if (stringExtracted[1] == '/')
+					flux_compacted_file << "*/";
 			}
-			else if (stringToExtract.substr(0, 3) == "if(")
-				flux_compacted_file << stringExtracted;
-			else if (stringToExtract.substr(0, 5) == "else{")
-				flux_compacted_file << stringExtracted;
-			else if (stringToExtract.substr(0, 6) == "while(")
-				flux_compacted_file << stringExtracted;
-			else if (stringToExtract.substr(0, 4) == "for(")
-				flux_compacted_file << stringExtracted;
-			else if (stringToExtract.substr(0, 7) == "switch(")
-				flux_compacted_file << stringExtracted;
-			else if (stringToExtract.substr(0, 5) == "case ")
-				flux_compacted_file << stringExtracted;
-			else if (stringToExtract.substr(0, 8) == "default:")
-				flux_compacted_file << stringExtracted;
-			else if (stringToExtract.substr(0, 3) == "do{")
-				flux_compacted_file << stringExtracted;
-			else if (stringToExtract.substr(0, 4) == "try{")
-				flux_compacted_file << stringExtracted;
-			else if (stringToExtract.substr(0, 6) == "catch(")
-				flux_compacted_file << stringExtracted;
+			else if (stringExtracted[0] == ' ' || stringExtracted[0] == '\t')
+				continue;
+			else if (stringExtracted[0] == '\n')
+				flux_compacted_file << " ";
 			else
-				flux_compacted_file << stringExtracted;
+			{
+				bool isInString = false;
+				for (int i = 0; i < stringExtracted.size(); i++)
+				{
+					flux_compacted_file << stringExtracted[i];
+					if (stringExtracted[i] == '"')
+						isInString = !isInString;
+					if (!isInString)
+					{
+						std::string symbols("+-/*=<>()[]:;,?!");
+						bool removeSpace = false;
+						int pos = i;
+						pos++;
+						for (int j = 0; j < symbols.size(); j++)
+							if (stringExtracted[i] == symbols[j])
+							{
+								removeSpace = true;
+								while (stringExtracted[pos] == ' ' || stringExtracted[pos] == '\t')
+									pos++;
+							}
+						while (stringExtracted[pos] == ' ' || stringExtracted[pos] == '\t')
+						{
+							pos++;
+							for (int j = 0; j < symbols.size(); j++)
+								if (stringExtracted[pos] == symbols[j])
+									removeSpace = true;
+						}
+						if (removeSpace)
+						{
+							i += pos - i - 1;
+							removeSpace = false;
+						}
+					}
+				}
+			}
+			flux_compacted_file.flush();
 		}
 
 		flux_compacted_file.close();
 	}
 
-	void indentAuto(std::string file, int tabSpace, bool newLineAftDeclaration, bool newLineAftProcedure,
-					bool breakBeforeOppBool, bool breakAfterComma, bool bracesAftCommand, bool tabBraces,
-					bool bracesNewLineStruct, bool bracesNewLineClass, bool bracesNewLineEnum, int spaceComment,
-					int tabCase, int tabContinuDecla, bool oneLineArg, bool keepBlankLine, bool alineParentheses,
-					bool eightyChar, bool optiBraces, bool preProcTab);
+	static void indentAuto(std::string inputFile, std::string outputFile, int tabSpace, bool newLineAftDeclaration, bool newLineAftInstr,
+						   bool breakBeforeOppBool, bool breakAfterComma, bool bracesAftCommand, bool tabBraces,
+						   bool bracesNewLineStruct, bool bracesNewLineClass, bool bracesNewLineEnum, int spaceComment,
+						   int tabCase, int tabContinuDecla, bool oneLineArg, bool keepBlankLine, bool alineParentheses,
+						   bool eightyChar, bool optiBraces, bool preProcTab, bool spaceInstrPar, bool spaceInstBraces)
+	{
+		std::ofstream outFile;
+		if (outputFile == "")
+			outFile.open(inputFile);
+		else
+			outFile.open(outputFile);
+
+		std::string toIndent = fileInVector(inputFile);
+		int tabNum(0);
+		while (toIndent.size() > 0)
+		{
+			if (toIndent[0] == '#')
+				outFile << indentPreProc(toIndent);
+			else if (toIndent[0] == ' ')
+			{
+				outFile << '\n';
+				toIndent.erase(0, 1);
+			}
+			else if (toIndent[0] == '{')
+				caseOpenBrace(outFile, toIndent, tabNum, newLineAftInstr, spaceInstBraces);
+			else if (toIndent[0] == '}')
+				caseCloseBrace(outFile, toIndent, tabNum);
+			else if (toIndent.substr(0, 3) == "if(")
+				outFile << indentIf(toIndent);
+			else if (toIndent.substr(0, 4) == "for(")
+				outFile << indentFor(toIndent);
+			else if (toIndent.substr(0, 6) == "while(")
+				outFile << indentWhile(toIndent);
+			else if (toIndent.substr(0, 7) == "switch(")
+				outFile << indentSwitch(toIndent);
+			else if (toIndent.substr(0, 3) == "do(")
+				outFile << indentDo(toIndent);
+		}
+	}
+
+	static std::string caseOpenBrace(std::ofstream &outFile, std::string &toIndent, int &tabNum, bool newLineBrace, bool spaceBrace)
+	{
+		if (!newLineBrace && spaceBrace)
+			outFile << ' ';
+
+		if (newLineBrace)
+		{
+			outFile << '\n';
+			for (int i(0); i < tabNum; i++)
+				outFile << '\t';
+		}
+
+		outFile << "{\n";
+		tabNum++;
+		for (int i(0); i < tabNum; i++)
+			outFile << '\t';
+		toIndent.erase(0, 1);
+	}
+
+	static std::string caseCloseBrace(std::ofstream &outFile, std::string &toIndent, int &tabNum)
+	{
+		outFile << '\n';
+		tabNum--;
+
+		for (int i(0); i < tabNum; i++)
+			outFile << '\t';
+
+		outFile << "}\n";
+
+		for (int i(0); i < tabNum; i++)
+			outFile << '\t';
+
+		toIndent.erase(0, 1);
+	}
+
+	static std::string indentPreProc(std::string &toIndent)
+	{
+		return getNextPreProc(toIndent);
+	}
+
+	static std::string indentIf(std::string &toIndent)
+	{
+		return getNextIf(toIndent);
+	}
+
+	static std::string indentFor(std::string &toIndent)
+	{
+		return getNextFor(toIndent);
+	}
+
+	static std::string indentWhile(std::string &toIndent)
+	{
+		return getNextWhile(toIndent);
+	}
+
+	static std::string indentSwitch(std::string &toIndent)
+	{
+		return getNextSwitch(toIndent);
+	}
+
+	static std::string indentDo(std::string &toIndent)
+	{
+		return getNextDo(toIndent);
+	}
 };
 
 #endif //CODE_GENERATOR_CODE_COMPREHENSION_H

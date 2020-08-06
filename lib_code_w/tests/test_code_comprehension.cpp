@@ -132,6 +132,29 @@ void test_getNextLinebreak(void)
     assert(stringExtracted == "prank"); 
 }
 
+void test_getNextTabulation(void)
+{
+    std::string stringExtracted("");
+    assert(codeComprehension::getNextTabulation(stringExtracted) == "");
+    assert(stringExtracted == ""); 
+
+    stringExtracted = "Nothing to get";
+    assert(codeComprehension::getNextTabulation(stringExtracted) == "");
+    assert(stringExtracted == "Nothing to get"); 
+
+    stringExtracted = "prank\t";
+    assert(codeComprehension::getNextTabulation(stringExtracted) == "");
+    assert(stringExtracted == "prank\t"); 
+
+    stringExtracted = "\t";
+    assert(codeComprehension::getNextTabulation(stringExtracted) == "\t");
+    assert(stringExtracted == ""); 
+
+    stringExtracted = "\tprank";
+    assert(codeComprehension::getNextTabulation(stringExtracted) == "\t");
+    assert(stringExtracted == "prank"); 
+}
+
 void test_getNextComment(void)
 {
     std::string stringExtracted("");
@@ -150,9 +173,9 @@ void test_getNextComment(void)
     assert(codeComprehension::getNextComment(stringExtracted) == "");
     assert(stringExtracted == " /*Prank*/"); 
 
-    stringExtracted = "//Comment";
+    stringExtracted = "//Comment\n";
     assert(codeComprehension::getNextComment(stringExtracted) == "//Comment");
-    assert(stringExtracted == ""); 
+    assert(stringExtracted == "\n"); 
 
     stringExtracted = "/*Comment*/";
     assert(codeComprehension::getNextComment(stringExtracted) == "/*Comment*/");
@@ -170,9 +193,9 @@ void test_getNextComment(void)
     assert(codeComprehension::getNextComment(stringExtracted) == "/*//Tricky comment*/");
     assert(stringExtracted == ""); 
 
-    stringExtracted = "///*Comment";
+    stringExtracted = "///*Comment\n";
     assert(codeComprehension::getNextComment(stringExtracted) == "///*Comment");
-    assert(stringExtracted == ""); 
+    assert(stringExtracted == "\n"); 
 
     stringExtracted = "/*Comment\nwith a line break*/";
     assert(codeComprehension::getNextComment(stringExtracted) == "/*Comment\nwith a line break*/");
@@ -715,6 +738,10 @@ void test_getNextItem(void)
     assert(codeComprehension::getNextItem(stringExtracted) == "\n");
     assert(stringExtracted == "prank");
 
+    stringExtracted = "\tprank";
+    assert(codeComprehension::getNextItem(stringExtracted) == "\t");
+    assert(stringExtracted == "prank");
+
     stringExtracted = "if()prank";
     assert(codeComprehension::getNextItem(stringExtracted) == "if()");
     assert(stringExtracted == "prank");
@@ -770,6 +797,7 @@ int main(void)
     TEST(test_getNextClosingBrace);
     TEST(test_getNextSpace);
     TEST(test_getNextLinebreak);
+    TEST(test_getNextTabulation);
     TEST(test_getNextComment);
     TEST(test_getNextIf);
     TEST(test_getNextElse);
