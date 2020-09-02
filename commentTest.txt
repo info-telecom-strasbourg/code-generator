@@ -1,7 +1,0 @@
-/* std::string //stringToExtract(codeComprehension::fileInVector("test.txt"));\n */
-// cout << stringToExtract << endl;
-// cout << codeComprehension::getNextString(stringToExtract) << endl;
-// cout << stringToExtract << endl;
-
-    return 0;
-}
