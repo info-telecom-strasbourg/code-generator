@@ -11,7 +11,7 @@
  */
 void test_flux(void)
 {
-    codeWrite cw("main.cpp");
+    codeWrite cw("files/files_code_write/testFile.cpp");
     cw._include("<iostream>");
     cw._function_free("int", "test");
     cw._start();
@@ -31,8 +31,8 @@ void test_flux(void)
         cw._return(0);
     cw._end();
     cw.flush();
-    assert_file("main.cpp", "files/files_code_write/flux.txt");
-    remove("main.cpp");
+    assert_file("files/files_code_write/testFile.cpp", "files/files_code_write/flux.txt");
+    remove("files/files_code_write/testFile.cpp");
 }
 
 /**
@@ -40,14 +40,14 @@ void test_flux(void)
  */
 void test_preproc(void)
 {
-    codeWrite cw("main.cpp");
+    codeWrite cw("files/files_code_write/testFile.cpp");
     cw._ifndef("TEST_H");
     cw._define("TEST_H");
     cw._linebreak();
     cw._endif();
     cw.flush();
-    assert_file("main.cpp", "files/files_code_write/preproc.txt");
-    remove("main.cpp");
+    assert_file("files/files_code_write/testFile.cpp", "files/files_code_write/preproc.txt");
+    remove("files/files_code_write/testFile.cpp");
 }
 
 /**
@@ -55,7 +55,7 @@ void test_preproc(void)
  */
 void test_objects(void)
 {
-    codeWrite cw("main.cpp");
+    codeWrite cw("files/files_code_write/testFile.cpp");
     cw._struct_typedef("Coord");
         cw._code("int x"); cw._semicolon();
         cw._code("int y"); cw._semicolon();
@@ -69,8 +69,8 @@ void test_objects(void)
     cw._public();
     cw._end_object();
     cw.flush();
-    assert_file("main.cpp", "files/files_code_write/objects.txt");
-    remove("main.cpp");
+    assert_file("files/files_code_write/testFile.cpp", "files/files_code_write/objects.txt");
+    remove("files/files_code_write/testFile.cpp");
 }
 
 /**
@@ -78,7 +78,7 @@ void test_objects(void)
  */
 void test_instructions(void)
 {
-    codeWrite cw("main.cpp");
+    codeWrite cw("files/files_code_write/testFile.cpp");
     cw._for("int i = 0; i < 2; i ++");
         cw._while("true");
             cw._switch("i");
@@ -98,8 +98,8 @@ void test_instructions(void)
        cw._break();
     cw.do_while("true");
     cw.flush();
-    assert_file("main.cpp", "files/files_code_write/instructions.txt");
-    remove("main.cpp");
+    assert_file("files/files_code_write/testFile.cpp", "files/files_code_write/instructions.txt");
+    remove("files/files_code_write/testFile.cpp");
 }
 
 /**
@@ -107,20 +107,20 @@ void test_instructions(void)
  */
 void test_comments(void)
 {
-    codeWrite cw("main.cpp");
+    codeWrite cw("files/files_code_write/testFile.cpp");
     cw._comment("This program shows how to declare a variable.");
     cw._comment_line("Declaration of the variable");
     cw._linebreak();
     cw._code("int nb = 2;");
     cw._comment_line("the variable nb is equal to 2");
     cw.flush();
-    assert_file("main.cpp", "files/files_code_write/comments.txt");
-    remove("main.cpp");
+    assert_file("files/files_code_write/testFile.cpp", "files/files_code_write/comments.txt");
+    remove("files/files_code_write/testFile.cpp");
 }
 
 int main(void)
 {
-    std::cout << "----- Launch tests for the library lib-code-w -----" << std::endl << std::endl;
+    std::cout << "----- Launch tests for the library codeWrite -----" << std::endl << std::endl;
     TEST(test_flux);
     TEST(test_preproc);
     TEST(test_objects);
