@@ -5,7 +5,7 @@
 
 void test_stringExtracted(void)
 {
-    std::string stringExtracted(codeComprehension::fileInVector("filesCmp/stringToExtract.txt"));
+    std::string stringExtracted(codeComprehension::fileInVector("files/files_code_comprehension/stringToExtract.txt"));
     assert(stringExtracted == "This\nis\na\ntest\nfile");
 }
 

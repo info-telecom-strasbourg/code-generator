@@ -27,14 +27,14 @@ $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 clean:
 	$(RM) $(OBJDIR)/* $(BINDIR)/*
 
-test-code-w:
+test-code-write:
 	@ cd tests $(MAKE) && make run TARGET=test_lib_code_w || true
 
-test-code-comp:
+test-code-comprehension:
 	@ cd tests $(MAKE) && make run TARGET=test_code_comprehension || true
 
-compact:
-	@ cd tests $(MAKE) && make run TARGET=compact || true
+test-compact:
+	@ cd tests $(MAKE) && make run TARGET=test_compact || true
 
 test:
 	@ cd tests $(MAKE) && make run

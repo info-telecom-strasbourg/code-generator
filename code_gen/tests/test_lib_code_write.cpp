@@ -1,10 +1,10 @@
 /**
- * Unit tests on lib-code-w
+ * Unit tests on codeWrite
  */
 
 #include <iostream>
 #include "unit_test.hpp"
-#include "lib-code-w.hpp"
+#include "codeWrite.hpp"
 
 /**
  * Test the generation of flux
@@ -31,7 +31,7 @@ void test_flux(void)
         cw._return(0);
     cw._end();
     cw.flush();
-    assert_file("main.cpp", "filesCmp/flux.txt");
+    assert_file("main.cpp", "files/files_code_write/flux.txt");
     remove("main.cpp");
 }
 
@@ -46,7 +46,7 @@ void test_preproc(void)
     cw._linebreak();
     cw._endif();
     cw.flush();
-    assert_file("main.cpp", "filesCmp/preproc.txt");
+    assert_file("main.cpp", "files/files_code_write/preproc.txt");
     remove("main.cpp");
 }
 
@@ -69,7 +69,7 @@ void test_objects(void)
     cw._public();
     cw._end_object();
     cw.flush();
-    assert_file("main.cpp", "filesCmp/objects.txt");
+    assert_file("main.cpp", "files/files_code_write/objects.txt");
     remove("main.cpp");
 }
 
@@ -98,7 +98,7 @@ void test_instructions(void)
        cw._break();
     cw.do_while("true");
     cw.flush();
-    assert_file("main.cpp", "filesCmp/instructions.txt");
+    assert_file("main.cpp", "files/files_code_write/instructions.txt");
     remove("main.cpp");
 }
 
@@ -114,7 +114,7 @@ void test_comments(void)
     cw._code("int nb = 2;");
     cw._comment_line("the variable nb is equal to 2");
     cw.flush();
-    assert_file("main.cpp", "filesCmp/comments.txt");
+    assert_file("main.cpp", "files/files_code_write/comments.txt");
     remove("main.cpp");
 }
 
