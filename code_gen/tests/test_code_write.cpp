@@ -11,7 +11,7 @@
  */
 void test_flux(void)
 {
-    CodeW cw("main.cpp");
+    codeWrite cw("main.cpp");
     cw._include("<iostream>");
     cw._function_free("int", "test");
     cw._start();
@@ -40,7 +40,7 @@ void test_flux(void)
  */
 void test_preproc(void)
 {
-    CodeW cw("main.cpp");
+    codeWrite cw("main.cpp");
     cw._ifndef("TEST_H");
     cw._define("TEST_H");
     cw._linebreak();
@@ -55,7 +55,7 @@ void test_preproc(void)
  */
 void test_objects(void)
 {
-    CodeW cw("main.cpp");
+    codeWrite cw("main.cpp");
     cw._struct_typedef("Coord");
         cw._code("int x"); cw._semicolon();
         cw._code("int y"); cw._semicolon();
@@ -78,7 +78,7 @@ void test_objects(void)
  */
 void test_instructions(void)
 {
-    CodeW cw("main.cpp");
+    codeWrite cw("main.cpp");
     cw._for("int i = 0; i < 2; i ++");
         cw._while("true");
             cw._switch("i");
@@ -107,7 +107,7 @@ void test_instructions(void)
  */
 void test_comments(void)
 {
-    CodeW cw("main.cpp");
+    codeWrite cw("main.cpp");
     cw._comment("This program shows how to declare a variable.");
     cw._comment_line("Declaration of the variable");
     cw._linebreak();

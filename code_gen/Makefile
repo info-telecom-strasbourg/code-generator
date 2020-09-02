@@ -28,13 +28,13 @@ clean:
 	$(RM) $(OBJDIR)/* $(BINDIR)/*
 
 test-code-write:
-	@ cd tests $(MAKE) && make run TARGET=test_lib_code_w || true
+	@ cd tests $(MAKE) && make run TARGET=test_code_write || true
 
 test-code-comprehension:
 	@ cd tests $(MAKE) && make run TARGET=test_code_comprehension || true
 
-test-compact:
-	@ cd tests $(MAKE) && make run TARGET=test_compact || true
+test-code-compact:
+	@ cd tests $(MAKE) && make run TARGET=test_code_compact || true
 
 test:
 	@ cd tests $(MAKE) && make run

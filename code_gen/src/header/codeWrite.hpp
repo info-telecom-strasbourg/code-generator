@@ -3,8 +3,8 @@
  * Developped by Hugo LAULLIER and Thomas RIVES
  */
 
-#ifndef CODE_w
-#define CODE_w
+#ifndef CODE_WRITE
+#define CODE_WRITE
 
 #include <iostream>
 #include <fstream>
@@ -15,9 +15,9 @@
 #include <algorithm>
 
 /**
- * Class of CodeW
+ * Class of codeWrite
  */
-class CodeW
+class codeWrite
 {
 private:
     /* The output flux */
@@ -107,10 +107,10 @@ private:
 
 public:
     /**
-    * Constructor of CodeW
+    * Constructor of codeWrite
     * @param file: the output file
     */
-    CodeW(std::string file)
+    codeWrite(std::string file)
     {
         this->fluxFile.open(file);
         if (this->fluxFile.bad())
@@ -121,9 +121,9 @@ public:
     }
     
     /**
-    * Destructor of CodeW
+    * Destructor of codeWrite
     */
-    ~CodeW()
+    ~codeWrite()
     {
         this->fluxFile.close();
     }
