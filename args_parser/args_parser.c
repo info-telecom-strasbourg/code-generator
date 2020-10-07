@@ -139,12 +139,15 @@ struct args_t * init_args_t (struct args_t * a, const char ** args_type,
 
 
 
-char * get_flag_arg(struct args_t * a, enum flags_t f) {
+char * get_flag_arg(struct args_t * a, enum flags_t f,
+	unsigned int arg_type_idx) {
 
-	if (a->fat->flags_args[f] == NULL)
+	unsigned int flag_start_idx = a->fat->flags_start_idxes[f+1];
+
+	if (a->fat->flags_args[flag_start_idx + arg_type_idx] == NULL)
 		return "noarg";
 
-	return a->fat->flags_args[f];
+	return a->fat->flags_args[flag_start_idx + arg_type_idx];
 }
 
 
@@ -154,20 +157,24 @@ struct args_t * add_args (enum flags_t f, struct args_t * a, const char * s) {
 
 	int flag_start_idx = a->fat->flags_start_idxes[f+1];
 	int flag_end_idx = a->fat->flags_end_idxes[f+1];
-	unsigned int flag_args_idx;
+	unsigned int new_arg_idx, flag_args_idx;
 	int offset;
 
 	size_t s_size = strlen(s);
 	
-	for (int i = flag_start_idx; i < flag_end_idx; i++) {
+	for (int i = flag_start_idx; i <= flag_end_idx; i++) {
 
 		if ((offset = find (a->fat->args_type[i], s)) != -1) {
 			flag_args_idx = 0;
 
-			a->fat->flags_args[f] = calloc(s_size - offset + 1, sizeof(char));
+			new_arg_idx = i;
 
-			while ( s[offset] ) {
-				a->fat->flags_args[f][flag_args_idx] = s[offset];
+			a->fat->flags_args[new_arg_idx] =
+				calloc(s_size - offset + 1, sizeof(char));
+
+
+			while ( s[offset] && s[offset] != ' ') {
+				a->fat->flags_args[new_arg_idx][flag_args_idx] = s[offset];
 				offset++;
 				flag_args_idx++;
 			}
@@ -256,25 +263,26 @@ int main (int argc, char** argv) {
 		"obj",
 		"bin",
 		"indent_size",
-		"if_option"
+		"if_option",
+		"julien"
 	};
 
-	const unsigned int nb_of_types = 6;
+	const unsigned int nb_of_types = 7;
 
-	const unsigned int flags_start_idxes[3] = {2,0,3};
+	const unsigned int flags_start_idxes[3] = {2,0,4};
 
-	const unsigned int flags_end_idxes[3] = {2,4,5};
+	const unsigned int flags_end_idxes[3] = {2,3,6};
 
-	a = init_args_t (a, args_type, nb_of_types, flags_start_idxes, 
+	a = init_args_t (a, args_type, nb_of_types, flags_start_idxes,
 		flags_end_idxes);
 
 	a = args_parser (argc, argv, a, "m:i:");
 
-	printf("[%s]\n", get_flag_arg(a, 2));
+	printf("[%s]\n", get_flag_arg(a, FLAG_M, 0));
+	
+	printf("[%s]\n", get_flag_arg(a, FLAG_M, 1));
 
-	// Pour regler le probleme de optarg qui ne prend que le premier argument
-	// avant l'espace, on peut enlever tous les espaces avant le token
-	// [[:blank:=]]
+	printf("[%s]\n", get_flag_arg(a, FLAG_I, 2));
 
 	return 0;
 }
