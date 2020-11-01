@@ -1,0 +1,297 @@
+Grammar
+
+    0 $accept: liste $end
+
+    1 liste: %empty
+    2      | liste instruction ENDL
+
+    3 instruction: IDENT DEF expression
+    4            | IDENT
+
+    5 expression: operande
+    6           | operande operateur2 operande
+    7           | operateur1 operande
+
+    8 operateur2: UNION
+    9           | INTER
+   10           | DIFF
+
+   11 operateur1: COMP
+
+   12 operande: IDENT
+   13         | ensemble
+
+   14 ensemble: O_CURLY_BRACK C_CURLY_BRACK
+   15         | O_CURLY_BRACK liste_elements C_CURLY_BRACK
+
+   16 liste_elements: ELEMENT
+   17               | ELEMENT COMMA liste_elements
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    ENDL (258) 2
+    DEF (259) 3
+    UNION (260) 8
+    INTER (261) 9
+    DIFF (262) 10
+    COMP (263) 11
+    O_CURLY_BRACK (264) 14 15
+    C_CURLY_BRACK (265) 14 15
+    COMMA (266) 17
+    ELEMENT (267) 16 17
+    IDENT (268) 3 4 12
+
+
+Nonterminals, with rules where they appear
+
+    $accept (14)
+        on left: 0
+    liste (15)
+        on left: 1 2
+        on right: 0 2
+    instruction (16)
+        on left: 3 4
+        on right: 2
+    expression (17)
+        on left: 5 6 7
+        on right: 3
+    operateur2 (18)
+        on left: 8 9 10
+        on right: 6
+    operateur1 (19)
+        on left: 11
+        on right: 7
+    operande (20)
+        on left: 12 13
+        on right: 5 6 7
+    ensemble (21)
+        on left: 14 15
+        on right: 13
+    liste_elements (22)
+        on left: 16 17
+        on right: 15 17
+
+
+State 0
+
+    0 $accept: . liste $end
+
+    $default  reduce using rule 1 (liste)
+
+    liste  go to state 1
+
+
+State 1
+
+    0 $accept: liste . $end
+    2 liste: liste . instruction ENDL
+
+    $end   shift, and go to state 2
+    IDENT  shift, and go to state 3
+
+    instruction  go to state 4
+
+
+State 2
+
+    0 $accept: liste $end .
+
+    $default  accept
+
+
+State 3
+
+    3 instruction: IDENT . DEF expression
+    4            | IDENT .
+
+    DEF  shift, and go to state 5
+
+    $default  reduce using rule 4 (instruction)
+
+
+State 4
+
+    2 liste: liste instruction . ENDL
+
+    ENDL  shift, and go to state 6
+
+
+State 5
+
+    3 instruction: IDENT DEF . expression
+
+    COMP           shift, and go to state 7
+    O_CURLY_BRACK  shift, and go to state 8
+    IDENT          shift, and go to state 9
+
+    expression  go to state 10
+    operateur1  go to state 11
+    operande    go to state 12
+    ensemble    go to state 13
+
+
+State 6
+
+    2 liste: liste instruction ENDL .
+
+    $default  reduce using rule 2 (liste)
+
+
+State 7
+
+   11 operateur1: COMP .
+
+    $default  reduce using rule 11 (operateur1)
+
+
+State 8
+
+   14 ensemble: O_CURLY_BRACK . C_CURLY_BRACK
+   15         | O_CURLY_BRACK . liste_elements C_CURLY_BRACK
+
+    C_CURLY_BRACK  shift, and go to state 14
+    ELEMENT        shift, and go to state 15
+
+    liste_elements  go to state 16
+
+
+State 9
+
+   12 operande: IDENT .
+
+    $default  reduce using rule 12 (operande)
+
+
+State 10
+
+    3 instruction: IDENT DEF expression .
+
+    $default  reduce using rule 3 (instruction)
+
+
+State 11
+
+    7 expression: operateur1 . operande
+
+    O_CURLY_BRACK  shift, and go to state 8
+    IDENT          shift, and go to state 9
+
+    operande  go to state 17
+    ensemble  go to state 13
+
+
+State 12
+
+    5 expression: operande .
+    6           | operande . operateur2 operande
+
+    UNION  shift, and go to state 18
+    INTER  shift, and go to state 19
+    DIFF   shift, and go to state 20
+
+    $default  reduce using rule 5 (expression)
+
+    operateur2  go to state 21
+
+
+State 13
+
+   13 operande: ensemble .
+
+    $default  reduce using rule 13 (operande)
+
+
+State 14
+
+   14 ensemble: O_CURLY_BRACK C_CURLY_BRACK .
+
+    $default  reduce using rule 14 (ensemble)
+
+
+State 15
+
+   16 liste_elements: ELEMENT .
+   17               | ELEMENT . COMMA liste_elements
+
+    COMMA  shift, and go to state 22
+
+    $default  reduce using rule 16 (liste_elements)
+
+
+State 16
+
+   15 ensemble: O_CURLY_BRACK liste_elements . C_CURLY_BRACK
+
+    C_CURLY_BRACK  shift, and go to state 23
+
+
+State 17
+
+    7 expression: operateur1 operande .
+
+    $default  reduce using rule 7 (expression)
+
+
+State 18
+
+    8 operateur2: UNION .
+
+    $default  reduce using rule 8 (operateur2)
+
+
+State 19
+
+    9 operateur2: INTER .
+
+    $default  reduce using rule 9 (operateur2)
+
+
+State 20
+
+   10 operateur2: DIFF .
+
+    $default  reduce using rule 10 (operateur2)
+
+
+State 21
+
+    6 expression: operande operateur2 . operande
+
+    O_CURLY_BRACK  shift, and go to state 8
+    IDENT          shift, and go to state 9
+
+    operande  go to state 24
+    ensemble  go to state 13
+
+
+State 22
+
+   17 liste_elements: ELEMENT COMMA . liste_elements
+
+    ELEMENT  shift, and go to state 15
+
+    liste_elements  go to state 25
+
+
+State 23
+
+   15 ensemble: O_CURLY_BRACK liste_elements C_CURLY_BRACK .
+
+    $default  reduce using rule 15 (ensemble)
+
+
+State 24
+
+    6 expression: operande operateur2 operande .
+
+    $default  reduce using rule 6 (expression)
+
+
+State 25
+
+   17 liste_elements: ELEMENT COMMA liste_elements .
+
+    $default  reduce using rule 17 (liste_elements)

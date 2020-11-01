@@ -1,0 +1,6 @@
+Source = ${ echo ./src/$(basename $PWD).c }
+Extensions = c/h
+Include = ./include
+Object = ./obj
+Bin = .
+Name = ${ echo $(basename $PWD) }

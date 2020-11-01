@@ -1,0 +1,6 @@
+Source = ${ echo $(basename $PWD).c }
+Extensions = c/h
+Include = .
+Object = .
+Bin = .
+Name = ${ echo $(basename $PWD) }

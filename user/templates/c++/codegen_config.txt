@@ -1,0 +1,6 @@
+Source = ${ echo $(basename $PWD).cpp }
+Extensions = cpp/hpp
+Include = .
+Object = .
+Bin = .
+Name = ${ echo $(basename $PWD) }
