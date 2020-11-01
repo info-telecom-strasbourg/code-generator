@@ -15,7 +15,7 @@ it mainly does three things:
 Here is the list of commands to install codegen:
 
 ```
-git clone X
+git clone git@github.com:info-telecom-strasbourg/code-generator.git
 ```
 
 Then, place the cloned directory where you want it to be. After this, you need to set
