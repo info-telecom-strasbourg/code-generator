@@ -1,5 +1,5 @@
 CC = opt_0
-CFLAGS ?= -lcurses -Wall -Wextra -Werror -g
+CFLAGS ?= -Wall -Wextra -Werror -g
 
 CEXTENSION = opt_1
 HEXTENSION = opt_2
