@@ -114,6 +114,16 @@ void execute_script (bool to_print, int script_id) {
 			execl (BASH_PATH, BASH, CODEGEN_DIR_PARSING_SCRIPT_PATH,
 				NULL);
 		}
+		cerr << "error_log : " << BASH_PATH << endl;
+		cerr << "error_log : " << BASH << endl;
+		if ( script_id == SETUP_SCRIPT ) {
+			cerr << "error_log : " << CODEGEN_SETUP_SCRIPT_PATH << endl;
+			cerr << "error_log : " << CODEGEN_CONFIG_TXT << endl;
+			cerr << "error_log : " << CODEGEN_PATH << endl;
+ 		}
+		if ( script_id == DIR_PARSER_SCRIPT)
+			cerr << "error_log : " << CODEGEN_DIR_PARSING_SCRIPT_PATH << endl;
+
 		interupt (1, "error: execl failed in script process");
 		break;
 
