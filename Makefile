@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS ?= -lcurses -Wall -Wextra -Werror -g
+CFLAGS ?= -Wall -Wextra -Werror -g
 
 CEXTENSION = cpp
 HEXTENSION = h
