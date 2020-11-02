@@ -21,7 +21,7 @@ OBJECTS  := $(SOURCES:$(SRCDIR)/%.$(CEXTENSION)=$(OBJDIR)/%.o)
 $(BINDIR)/$(TARGET): $(OBJECTS)
 	mkdir -p $(BINDIR)
 	$(CC) -o $@ $^ $(CFLAGS) $(LDLIBS)
-	@echo "Makefile is complete."
+	@echo "codegen: setup is complete."
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.$(CEXTENSION)
 	mkdir -p $(OBJDIR)

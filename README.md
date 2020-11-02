@@ -36,6 +36,9 @@ You can now compile codegen and add it to PATH by doing:
 
 ```
 make
+cd ./codegen_setup
+make
+cd ..
 sudo make move_to_bin
 ```
 
